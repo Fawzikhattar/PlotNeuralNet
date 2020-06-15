@@ -1,0 +1,1465 @@
+
+\documentclass[border=8pt, multi, tikz]{standalone} 
+\usepackage{import}
+\subimport{../layers/}{init}
+\usetikzlibrary{positioning}
+\usetikzlibrary{3d} %for including external image 
+
+
+\def\ConvColor{rgb:yellow,5;red,2.5;white,5}
+\def\ConvReluColor{rgb:yellow,5;red,5;white,5}
+\def\PoolColor{rgb:red,1;black,0.3}
+\def\UnpoolColor{rgb:blue,2;green,1;black,0.3}
+\def\FcColor{rgb:blue,5;red,2.5;white,5}
+\def\FcReluColor{rgb:blue,5;red,5;white,4}
+\def\SoftmaxColor{rgb:magenta,5;black,7} 
+\def\FlattenColor{rgb:red,5;black,7} 
+\def\copyColor{rgb:green,5;black,7}   
+\def\SeparableConvColor{rgb:red,15;yellow,15;black,2}  
+
+
+\newcommand{\copymidarrow}{\tikz \draw[-Stealth,line width=0.8mm,draw={rgb:blue,4;red,1;green,1;black,3}] (-0.3,0) -- ++(0.3,0);}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
+\tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
+
+
+\pic[shift={(1,0,0)}] at (input_1-east) 
+    {Box={
+        name=conv1,
+        caption=$7x7$,
+        xlabel={{64, }},
+        zlabel=48,
+        fill=\ConvColor,
+        height=48,
+        width=2.1333333333333333,
+        depth=48
+        }
+    };
+
+
+\draw [connection]  (input_1-east)    -- node {\midarrow} (conv1-west);
+
+
+\pic[shift={ (0,0,0) }] at (conv1-east) 
+    {Box={
+        name=max_pooling2d,
+        caption= ,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=24,
+        width=2.1333333333333333,
+        depth=24
+        }
+    };
+
+
+\pic[shift={(1,0,0)}] at (max_pooling2d-east) 
+    {Box={
+        name=conv2,
+        caption=$1x1$,
+        xlabel={{64, }},
+        zlabel=24,
+        fill=\ConvColor,
+        height=24,
+        width=2.1333333333333333,
+        depth=24
+        }
+    };
+
+
+\draw [connection]  (max_pooling2d-east)    -- node {\midarrow} (conv2-west);
+
+
+\pic[shift={(1,0,0)}] at (conv2-east) 
+    {Box={
+        name=conv3,
+        caption=$3x3$,
+        xlabel={{192, }},
+        zlabel=24,
+        fill=\ConvColor,
+        height=24,
+        width=6.4,
+        depth=24
+        }
+    };
+
+
+\draw [connection]  (conv2-east)    -- node {\midarrow} (conv3-west);
+
+
+\pic[shift={ (0,0,0) }] at (conv3-east) 
+    {Box={
+        name=max_pooling2d_1,
+        caption= ,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=12,
+        width=6.4,
+        depth=12
+        }
+    };
+
+
+\pic[shift={(1,0,0)}] at (max_pooling2d_1-east) 
+    {Box={
+        name=inception_3a_3x3_conv1,
+        caption=$1x1$,
+        xlabel={{96, }},
+        zlabel=12,
+        fill=\ConvColor,
+        height=12,
+        width=3.2,
+        depth=12
+        }
+    };
+
+
+\draw [connection]  (max_pooling2d_1-east)    -- node {\midarrow} (inception_3a_3x3_conv1-west);
+
+
+\pic[shift={(1,5,0)}] at (max_pooling2d_1-east) 
+    {Box={
+        name=inception_3a_5x5_conv1,
+        caption=$1x1$,
+        xlabel={{16, }},
+        zlabel=12,
+        fill=\ConvColor,
+        height=12,
+        width=0.5333333333333333,
+        depth=12
+        }
+    };
+
+
+\draw [connection]  (max_pooling2d_1-east)    -- node {\midarrow} (inception_3a_5x5_conv1-west);
+
+
+\pic[shift={ (0,10,0) }] at (max_pooling2d_1-east) 
+    {Box={
+        name=max_pooling2d_2,
+        caption= ,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=5,
+        width=6.4,
+        depth=5
+        }
+    };
+
+
+\draw [connection]  (max_pooling2d_1-east)    -- node {\midarrow} (max_pooling2d_2-west);
+
+
+\pic[shift={(1,0,0)}] at (max_pooling2d_2-east) 
+    {Box={
+        name=inception_3a_pool_conv,
+        caption=$1x1$,
+        xlabel={{32, }},
+        zlabel=5,
+        fill=\ConvColor,
+        height=5,
+        width=1.0666666666666667,
+        depth=5
+        }
+    };
+
+
+\draw [connection]  (max_pooling2d_2-east)    -- node {\midarrow} (inception_3a_pool_conv-west);
+
+
+\pic[shift={(1,0,0)}] at (inception_3a_3x3_conv1-east) 
+    {Box={
+        name=inception_3a_3x3_conv2,
+        caption=$3x3$,
+        xlabel={{128, }},
+        zlabel=12,
+        fill=\ConvColor,
+        height=12,
+        width=4.266666666666667,
+        depth=12
+        }
+    };
+
+
+\draw [connection]  (inception_3a_3x3_conv1-east)    -- node {\midarrow} (inception_3a_3x3_conv2-west);
+
+
+\pic[shift={(1,0,0)}] at (inception_3a_5x5_conv1-east) 
+    {Box={
+        name=inception_3a_5x5_conv2,
+        caption=$5x5$,
+        xlabel={{32, }},
+        zlabel=12,
+        fill=\ConvColor,
+        height=12,
+        width=1.0666666666666667,
+        depth=12
+        }
+    };
+
+
+\draw [connection]  (inception_3a_5x5_conv1-east)    -- node {\midarrow} (inception_3a_5x5_conv2-west);
+
+
+\pic[shift={(1,20,0)}] at (max_pooling2d_1-east) 
+    {Box={
+        name=inception_3a_1x1_conv,
+        caption=$1x1$,
+        xlabel={{64, }},
+        zlabel=12,
+        fill=\ConvColor,
+        height=12,
+        width=2.1333333333333333,
+        depth=12
+        }
+    };
+
+
+\draw [connection]  (max_pooling2d_1-east)    -- node {\midarrow} (inception_3a_1x1_conv-west);
+
+
+\pic[shift={(2,0,0)}] at (inception_3a_3x3_conv2-east) 
+    {Box={
+        name=inception_3a_3x3_conv2_0,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=12,
+        width=4.266666666666667,
+        depth=12
+        }
+    };
+
+
+\path (inception_3a_3x3_conv2-southeast) -- (inception_3a_3x3_conv2-northeast) coordinate[pos=1.25] (inception_3a_3x3_conv2-top) ;
+\path (inception_3a_3x3_conv2_0-south)  -- (inception_3a_3x3_conv2_0-north)  coordinate[pos=1.25] (inception_3a_3x3_conv2_0-top) ;
+\draw [copyconnection]  (inception_3a_3x3_conv2-northeast)  
+-- node {\copymidarrow}(inception_3a_3x3_conv2-top)
+-- node {\copymidarrow}(inception_3a_3x3_conv2_0-top)
+-- node {\copymidarrow} (inception_3a_3x3_conv2_0-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_3a_3x3_conv2_0-east) 
+    {Box={
+        name=inception_3a_3x3_conv2_0_1,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=12,
+        width=1.0666666666666667,
+        depth=12
+        }
+    };
+
+
+\path (inception_3a_5x5_conv2-southeast) -- (inception_3a_5x5_conv2-northeast) coordinate[pos=1.25] (inception_3a_5x5_conv2-top) ;
+\path (inception_3a_3x3_conv2_0_1-south)  -- (inception_3a_3x3_conv2_0_1-north)  coordinate[pos=1.25] (inception_3a_3x3_conv2_0_1-top) ;
+\draw [copyconnection]  (inception_3a_5x5_conv2-northeast)  
+-- node {\copymidarrow}(inception_3a_5x5_conv2-top)
+-- node {\copymidarrow}(inception_3a_3x3_conv2_0_1-top)
+-- node {\copymidarrow} (inception_3a_3x3_conv2_0_1-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_3a_3x3_conv2_0_1-east) 
+    {Box={
+        name=inception_3a_3x3_conv2_0_1_2,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=12,
+        width=1.0666666666666667,
+        depth=12
+        }
+    };
+
+
+\path (inception_3a_pool_conv-southeast) -- (inception_3a_pool_conv-northeast) coordinate[pos=1.25] (inception_3a_pool_conv-top) ;
+\path (inception_3a_3x3_conv2_0_1_2-south)  -- (inception_3a_3x3_conv2_0_1_2-north)  coordinate[pos=1.25] (inception_3a_3x3_conv2_0_1_2-top) ;
+\draw [copyconnection]  (inception_3a_pool_conv-northeast)  
+-- node {\copymidarrow}(inception_3a_pool_conv-top)
+-- node {\copymidarrow}(inception_3a_3x3_conv2_0_1_2-top)
+-- node {\copymidarrow} (inception_3a_3x3_conv2_0_1_2-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_3a_3x3_conv2_0_1_2-east) 
+    {Box={
+        name=concatenate,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=12,
+        width=2.1333333333333333,
+        depth=12
+        }
+    };
+
+
+\path (inception_3a_1x1_conv-southeast) -- (inception_3a_1x1_conv-northeast) coordinate[pos=1.25] (inception_3a_1x1_conv-top) ;
+\path (concatenate-south)  -- (concatenate-north)  coordinate[pos=1.25] (concatenate-top) ;
+\draw [copyconnection]  (inception_3a_1x1_conv-northeast)  
+-- node {\copymidarrow}(inception_3a_1x1_conv-top)
+-- node {\copymidarrow}(concatenate-top)
+-- node {\copymidarrow} (concatenate-north);
+
+
+\pic[shift={(1,0,0)}] at (concatenate-east) 
+    {Box={
+        name=inception_3b_3x3_conv1,
+        caption=$1x1$,
+        xlabel={{96, }},
+        zlabel=12,
+        fill=\ConvColor,
+        height=12,
+        width=3.2,
+        depth=12
+        }
+    };
+
+
+\draw [connection]  (concatenate-east)    -- node {\midarrow} (inception_3b_3x3_conv1-west);
+
+
+\pic[shift={(1,5,0)}] at (concatenate-east) 
+    {Box={
+        name=inception_3b_5x5_conv1,
+        caption=$1x1$,
+        xlabel={{32, }},
+        zlabel=12,
+        fill=\ConvColor,
+        height=12,
+        width=1.0666666666666667,
+        depth=12
+        }
+    };
+
+
+\draw [connection]  (concatenate-east)    -- node {\midarrow} (inception_3b_5x5_conv1-west);
+
+
+\pic[shift={ (0,10,0) }] at (concatenate-east) 
+    {Box={
+        name=average_pooling2d,
+        caption= ,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=4,
+        width=8.533333333333333,
+        depth=4
+        }
+    };
+
+
+\draw [connection]  (concatenate-east)    -- node {\midarrow} (average_pooling2d-west);
+
+
+\pic[shift={(1,0,0)}] at (average_pooling2d-east) 
+    {Box={
+        name=inception_3b_pool_conv,
+        caption=$1x1$,
+        xlabel={{64, }},
+        zlabel=4,
+        fill=\ConvColor,
+        height=4,
+        width=2.1333333333333333,
+        depth=4
+        }
+    };
+
+
+\draw [connection]  (average_pooling2d-east)    -- node {\midarrow} (inception_3b_pool_conv-west);
+
+
+\pic[shift={(1,0,0)}] at (inception_3b_3x3_conv1-east) 
+    {Box={
+        name=inception_3b_3x3_conv2,
+        caption=$3x3$,
+        xlabel={{128, }},
+        zlabel=12,
+        fill=\ConvColor,
+        height=12,
+        width=4.266666666666667,
+        depth=12
+        }
+    };
+
+
+\draw [connection]  (inception_3b_3x3_conv1-east)    -- node {\midarrow} (inception_3b_3x3_conv2-west);
+
+
+\pic[shift={(1,0,0)}] at (inception_3b_5x5_conv1-east) 
+    {Box={
+        name=inception_3b_5x5_conv2,
+        caption=$5x5$,
+        xlabel={{64, }},
+        zlabel=12,
+        fill=\ConvColor,
+        height=12,
+        width=2.1333333333333333,
+        depth=12
+        }
+    };
+
+
+\draw [connection]  (inception_3b_5x5_conv1-east)    -- node {\midarrow} (inception_3b_5x5_conv2-west);
+
+
+\pic[shift={(1,20,0)}] at (concatenate-east) 
+    {Box={
+        name=inception_3b_1x1_conv,
+        caption=$1x1$,
+        xlabel={{64, }},
+        zlabel=12,
+        fill=\ConvColor,
+        height=12,
+        width=2.1333333333333333,
+        depth=12
+        }
+    };
+
+
+\draw [connection]  (concatenate-east)    -- node {\midarrow} (inception_3b_1x1_conv-west);
+
+
+\pic[shift={(2,0,0)}] at (inception_3b_3x3_conv2-east) 
+    {Box={
+        name=inception_3b_3x3_conv2_0,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=12,
+        width=4.266666666666667,
+        depth=12
+        }
+    };
+
+
+\path (inception_3b_3x3_conv2-southeast) -- (inception_3b_3x3_conv2-northeast) coordinate[pos=1.25] (inception_3b_3x3_conv2-top) ;
+\path (inception_3b_3x3_conv2_0-south)  -- (inception_3b_3x3_conv2_0-north)  coordinate[pos=1.25] (inception_3b_3x3_conv2_0-top) ;
+\draw [copyconnection]  (inception_3b_3x3_conv2-northeast)  
+-- node {\copymidarrow}(inception_3b_3x3_conv2-top)
+-- node {\copymidarrow}(inception_3b_3x3_conv2_0-top)
+-- node {\copymidarrow} (inception_3b_3x3_conv2_0-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_3b_3x3_conv2_0-east) 
+    {Box={
+        name=inception_3b_3x3_conv2_0_1,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=12,
+        width=2.1333333333333333,
+        depth=12
+        }
+    };
+
+
+\path (inception_3b_5x5_conv2-southeast) -- (inception_3b_5x5_conv2-northeast) coordinate[pos=1.25] (inception_3b_5x5_conv2-top) ;
+\path (inception_3b_3x3_conv2_0_1-south)  -- (inception_3b_3x3_conv2_0_1-north)  coordinate[pos=1.25] (inception_3b_3x3_conv2_0_1-top) ;
+\draw [copyconnection]  (inception_3b_5x5_conv2-northeast)  
+-- node {\copymidarrow}(inception_3b_5x5_conv2-top)
+-- node {\copymidarrow}(inception_3b_3x3_conv2_0_1-top)
+-- node {\copymidarrow} (inception_3b_3x3_conv2_0_1-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_3b_3x3_conv2_0_1-east) 
+    {Box={
+        name=inception_3b_3x3_conv2_0_1_2,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=12,
+        width=2.1333333333333333,
+        depth=12
+        }
+    };
+
+
+\path (inception_3b_pool_conv-southeast) -- (inception_3b_pool_conv-northeast) coordinate[pos=1.25] (inception_3b_pool_conv-top) ;
+\path (inception_3b_3x3_conv2_0_1_2-south)  -- (inception_3b_3x3_conv2_0_1_2-north)  coordinate[pos=1.25] (inception_3b_3x3_conv2_0_1_2-top) ;
+\draw [copyconnection]  (inception_3b_pool_conv-northeast)  
+-- node {\copymidarrow}(inception_3b_pool_conv-top)
+-- node {\copymidarrow}(inception_3b_3x3_conv2_0_1_2-top)
+-- node {\copymidarrow} (inception_3b_3x3_conv2_0_1_2-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_3b_3x3_conv2_0_1_2-east) 
+    {Box={
+        name=concatenate_1,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=12,
+        width=2.1333333333333333,
+        depth=12
+        }
+    };
+
+
+\path (inception_3b_1x1_conv-southeast) -- (inception_3b_1x1_conv-northeast) coordinate[pos=1.25] (inception_3b_1x1_conv-top) ;
+\path (concatenate_1-south)  -- (concatenate_1-north)  coordinate[pos=1.25] (concatenate_1-top) ;
+\draw [copyconnection]  (inception_3b_1x1_conv-northeast)  
+-- node {\copymidarrow}(inception_3b_1x1_conv-top)
+-- node {\copymidarrow}(concatenate_1-top)
+-- node {\copymidarrow} (concatenate_1-north);
+
+
+\pic[shift={(1,0,0)}] at (concatenate_1-east) 
+    {Box={
+        name=inception_3c_3x3_conv1,
+        caption=$1x1$,
+        xlabel={{128, }},
+        zlabel=12,
+        fill=\ConvColor,
+        height=12,
+        width=4.266666666666667,
+        depth=12
+        }
+    };
+
+
+\draw [connection]  (concatenate_1-east)    -- node {\midarrow} (inception_3c_3x3_conv1-west);
+
+
+\pic[shift={(1,5,0)}] at (concatenate_1-east) 
+    {Box={
+        name=inception_3c_5x5_conv1,
+        caption=$1x1$,
+        xlabel={{32, }},
+        zlabel=12,
+        fill=\ConvColor,
+        height=12,
+        width=1.0666666666666667,
+        depth=12
+        }
+    };
+
+
+\draw [connection]  (concatenate_1-east)    -- node {\midarrow} (inception_3c_5x5_conv1-west);
+
+
+\pic[shift={(1,0,0)}] at (inception_3c_3x3_conv1-east) 
+    {Box={
+        name=inception_3c_3x3_conv2,
+        caption=$3x3$,
+        xlabel={{256, }},
+        zlabel=6,
+        fill=\ConvColor,
+        height=6,
+        width=8.533333333333333,
+        depth=6
+        }
+    };
+
+
+\draw [connection]  (inception_3c_3x3_conv1-east)    -- node {\midarrow} (inception_3c_3x3_conv2-west);
+
+
+\pic[shift={(1,0,0)}] at (inception_3c_5x5_conv1-east) 
+    {Box={
+        name=inception_3c_5x5_conv2,
+        caption=$5x5$,
+        xlabel={{64, }},
+        zlabel=6,
+        fill=\ConvColor,
+        height=6,
+        width=2.1333333333333333,
+        depth=6
+        }
+    };
+
+
+\draw [connection]  (inception_3c_5x5_conv1-east)    -- node {\midarrow} (inception_3c_5x5_conv2-west);
+
+
+\pic[shift={ (0,10,0) }] at (concatenate_1-east) 
+    {Box={
+        name=max_pooling2d_3,
+        caption= ,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=5,
+        width=10.666666666666666,
+        depth=5
+        }
+    };
+
+
+\draw [connection]  (concatenate_1-east)    -- node {\midarrow} (max_pooling2d_3-west);
+
+
+\pic[shift={(2,0,0)}] at (inception_3c_3x3_conv2-east) 
+    {Box={
+        name=inception_3c_3x3_conv2_0,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=6,
+        width=8.533333333333333,
+        depth=6
+        }
+    };
+
+
+\path (inception_3c_3x3_conv2-southeast) -- (inception_3c_3x3_conv2-northeast) coordinate[pos=1.25] (inception_3c_3x3_conv2-top) ;
+\path (inception_3c_3x3_conv2_0-south)  -- (inception_3c_3x3_conv2_0-north)  coordinate[pos=1.25] (inception_3c_3x3_conv2_0-top) ;
+\draw [copyconnection]  (inception_3c_3x3_conv2-northeast)  
+-- node {\copymidarrow}(inception_3c_3x3_conv2-top)
+-- node {\copymidarrow}(inception_3c_3x3_conv2_0-top)
+-- node {\copymidarrow} (inception_3c_3x3_conv2_0-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_3c_3x3_conv2_0-east) 
+    {Box={
+        name=inception_3c_3x3_conv2_0_1,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=6,
+        width=2.1333333333333333,
+        depth=6
+        }
+    };
+
+
+\path (inception_3c_5x5_conv2-southeast) -- (inception_3c_5x5_conv2-northeast) coordinate[pos=1.25] (inception_3c_5x5_conv2-top) ;
+\path (inception_3c_3x3_conv2_0_1-south)  -- (inception_3c_3x3_conv2_0_1-north)  coordinate[pos=1.25] (inception_3c_3x3_conv2_0_1-top) ;
+\draw [copyconnection]  (inception_3c_5x5_conv2-northeast)  
+-- node {\copymidarrow}(inception_3c_5x5_conv2-top)
+-- node {\copymidarrow}(inception_3c_3x3_conv2_0_1-top)
+-- node {\copymidarrow} (inception_3c_3x3_conv2_0_1-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_3c_3x3_conv2_0_1-east) 
+    {Box={
+        name=concatenate_2,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=6,
+        width=10.666666666666666,
+        depth=6
+        }
+    };
+
+
+\path (max_pooling2d_3-southeast) -- (max_pooling2d_3-northeast) coordinate[pos=1.25] (max_pooling2d_3-top) ;
+\path (concatenate_2-south)  -- (concatenate_2-north)  coordinate[pos=1.25] (concatenate_2-top) ;
+\draw [copyconnection]  (max_pooling2d_3-northeast)  
+-- node {\copymidarrow}(max_pooling2d_3-top)
+-- node {\copymidarrow}(concatenate_2-top)
+-- node {\copymidarrow} (concatenate_2-north);
+
+
+\pic[shift={(1,0,0)}] at (concatenate_2-east) 
+    {Box={
+        name=inception_4a_3x3_conv1,
+        caption=$1x1$,
+        xlabel={{96, }},
+        zlabel=6,
+        fill=\ConvColor,
+        height=6,
+        width=3.2,
+        depth=6
+        }
+    };
+
+
+\draw [connection]  (concatenate_2-east)    -- node {\midarrow} (inception_4a_3x3_conv1-west);
+
+
+\pic[shift={(1,5,0)}] at (concatenate_2-east) 
+    {Box={
+        name=inception_4a_5x5_conv1,
+        caption=$1x1$,
+        xlabel={{32, }},
+        zlabel=6,
+        fill=\ConvColor,
+        height=6,
+        width=1.0666666666666667,
+        depth=6
+        }
+    };
+
+
+\draw [connection]  (concatenate_2-east)    -- node {\midarrow} (inception_4a_5x5_conv1-west);
+
+
+\pic[shift={ (0,10,0) }] at (concatenate_2-east) 
+    {Box={
+        name=average_pooling2d_1,
+        caption= ,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=2,
+        width=21.333333333333332,
+        depth=2
+        }
+    };
+
+
+\draw [connection]  (concatenate_2-east)    -- node {\midarrow} (average_pooling2d_1-west);
+
+
+\pic[shift={(1,0,0)}] at (average_pooling2d_1-east) 
+    {Box={
+        name=inception_4a_pool_conv,
+        caption=$1x1$,
+        xlabel={{128, }},
+        zlabel=2,
+        fill=\ConvColor,
+        height=2,
+        width=4.266666666666667,
+        depth=2
+        }
+    };
+
+
+\draw [connection]  (average_pooling2d_1-east)    -- node {\midarrow} (inception_4a_pool_conv-west);
+
+
+\pic[shift={(1,0,0)}] at (inception_4a_3x3_conv1-east) 
+    {Box={
+        name=inception_4a_3x3_conv2,
+        caption=$3x3$,
+        xlabel={{192, }},
+        zlabel=6,
+        fill=\ConvColor,
+        height=6,
+        width=6.4,
+        depth=6
+        }
+    };
+
+
+\draw [connection]  (inception_4a_3x3_conv1-east)    -- node {\midarrow} (inception_4a_3x3_conv2-west);
+
+
+\pic[shift={(1,0,0)}] at (inception_4a_5x5_conv1-east) 
+    {Box={
+        name=inception_4a_5x5_conv2,
+        caption=$5x5$,
+        xlabel={{64, }},
+        zlabel=6,
+        fill=\ConvColor,
+        height=6,
+        width=2.1333333333333333,
+        depth=6
+        }
+    };
+
+
+\draw [connection]  (inception_4a_5x5_conv1-east)    -- node {\midarrow} (inception_4a_5x5_conv2-west);
+
+
+\pic[shift={(1,20,0)}] at (concatenate_2-east) 
+    {Box={
+        name=inception_4a_1x1_conv,
+        caption=$1x1$,
+        xlabel={{256, }},
+        zlabel=6,
+        fill=\ConvColor,
+        height=6,
+        width=8.533333333333333,
+        depth=6
+        }
+    };
+
+
+\draw [connection]  (concatenate_2-east)    -- node {\midarrow} (inception_4a_1x1_conv-west);
+
+
+\pic[shift={(2,0,0)}] at (inception_4a_3x3_conv2-east) 
+    {Box={
+        name=inception_4a_3x3_conv2_0,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=6,
+        width=6.4,
+        depth=6
+        }
+    };
+
+
+\path (inception_4a_3x3_conv2-southeast) -- (inception_4a_3x3_conv2-northeast) coordinate[pos=1.25] (inception_4a_3x3_conv2-top) ;
+\path (inception_4a_3x3_conv2_0-south)  -- (inception_4a_3x3_conv2_0-north)  coordinate[pos=1.25] (inception_4a_3x3_conv2_0-top) ;
+\draw [copyconnection]  (inception_4a_3x3_conv2-northeast)  
+-- node {\copymidarrow}(inception_4a_3x3_conv2-top)
+-- node {\copymidarrow}(inception_4a_3x3_conv2_0-top)
+-- node {\copymidarrow} (inception_4a_3x3_conv2_0-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_4a_3x3_conv2_0-east) 
+    {Box={
+        name=inception_4a_3x3_conv2_0_1,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=6,
+        width=2.1333333333333333,
+        depth=6
+        }
+    };
+
+
+\path (inception_4a_5x5_conv2-southeast) -- (inception_4a_5x5_conv2-northeast) coordinate[pos=1.25] (inception_4a_5x5_conv2-top) ;
+\path (inception_4a_3x3_conv2_0_1-south)  -- (inception_4a_3x3_conv2_0_1-north)  coordinate[pos=1.25] (inception_4a_3x3_conv2_0_1-top) ;
+\draw [copyconnection]  (inception_4a_5x5_conv2-northeast)  
+-- node {\copymidarrow}(inception_4a_5x5_conv2-top)
+-- node {\copymidarrow}(inception_4a_3x3_conv2_0_1-top)
+-- node {\copymidarrow} (inception_4a_3x3_conv2_0_1-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_4a_3x3_conv2_0_1-east) 
+    {Box={
+        name=inception_4a_3x3_conv2_0_1_2,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=6,
+        width=4.266666666666667,
+        depth=6
+        }
+    };
+
+
+\path (inception_4a_pool_conv-southeast) -- (inception_4a_pool_conv-northeast) coordinate[pos=1.25] (inception_4a_pool_conv-top) ;
+\path (inception_4a_3x3_conv2_0_1_2-south)  -- (inception_4a_3x3_conv2_0_1_2-north)  coordinate[pos=1.25] (inception_4a_3x3_conv2_0_1_2-top) ;
+\draw [copyconnection]  (inception_4a_pool_conv-northeast)  
+-- node {\copymidarrow}(inception_4a_pool_conv-top)
+-- node {\copymidarrow}(inception_4a_3x3_conv2_0_1_2-top)
+-- node {\copymidarrow} (inception_4a_3x3_conv2_0_1_2-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_4a_3x3_conv2_0_1_2-east) 
+    {Box={
+        name=concatenate_3,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=6,
+        width=8.533333333333333,
+        depth=6
+        }
+    };
+
+
+\path (inception_4a_1x1_conv-southeast) -- (inception_4a_1x1_conv-northeast) coordinate[pos=1.25] (inception_4a_1x1_conv-top) ;
+\path (concatenate_3-south)  -- (concatenate_3-north)  coordinate[pos=1.25] (concatenate_3-top) ;
+\draw [copyconnection]  (inception_4a_1x1_conv-northeast)  
+-- node {\copymidarrow}(inception_4a_1x1_conv-top)
+-- node {\copymidarrow}(concatenate_3-top)
+-- node {\copymidarrow} (concatenate_3-north);
+
+
+\pic[shift={(1,0,0)}] at (concatenate_3-east) 
+    {Box={
+        name=inception_4e_3x3_conv1,
+        caption=$1x1$,
+        xlabel={{160, }},
+        zlabel=6,
+        fill=\ConvColor,
+        height=6,
+        width=5.333333333333333,
+        depth=6
+        }
+    };
+
+
+\draw [connection]  (concatenate_3-east)    -- node {\midarrow} (inception_4e_3x3_conv1-west);
+
+
+\pic[shift={(1,5,0)}] at (concatenate_3-east) 
+    {Box={
+        name=inception_4e_5x5_conv1,
+        caption=$1x1$,
+        xlabel={{64, }},
+        zlabel=6,
+        fill=\ConvColor,
+        height=6,
+        width=2.1333333333333333,
+        depth=6
+        }
+    };
+
+
+\draw [connection]  (concatenate_3-east)    -- node {\midarrow} (inception_4e_5x5_conv1-west);
+
+
+\pic[shift={(1,0,0)}] at (inception_4e_3x3_conv1-east) 
+    {Box={
+        name=inception_4e_3x3_conv2,
+        caption=$3x3$,
+        xlabel={{256, }},
+        zlabel=3,
+        fill=\ConvColor,
+        height=3,
+        width=8.533333333333333,
+        depth=3
+        }
+    };
+
+
+\draw [connection]  (inception_4e_3x3_conv1-east)    -- node {\midarrow} (inception_4e_3x3_conv2-west);
+
+
+\pic[shift={(1,0,0)}] at (inception_4e_5x5_conv1-east) 
+    {Box={
+        name=inception_4e_5x5_conv2,
+        caption=$5x5$,
+        xlabel={{128, }},
+        zlabel=3,
+        fill=\ConvColor,
+        height=3,
+        width=4.266666666666667,
+        depth=3
+        }
+    };
+
+
+\draw [connection]  (inception_4e_5x5_conv1-east)    -- node {\midarrow} (inception_4e_5x5_conv2-west);
+
+
+\pic[shift={ (0,10,0) }] at (concatenate_3-east) 
+    {Box={
+        name=max_pooling2d_4,
+        caption= ,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=2,
+        width=21.333333333333332,
+        depth=2
+        }
+    };
+
+
+\draw [connection]  (concatenate_3-east)    -- node {\midarrow} (max_pooling2d_4-west);
+
+
+\pic[shift={(2,0,0)}] at (inception_4e_3x3_conv2-east) 
+    {Box={
+        name=inception_4e_3x3_conv2_0,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=3,
+        width=8.533333333333333,
+        depth=3
+        }
+    };
+
+
+\path (inception_4e_3x3_conv2-southeast) -- (inception_4e_3x3_conv2-northeast) coordinate[pos=1.25] (inception_4e_3x3_conv2-top) ;
+\path (inception_4e_3x3_conv2_0-south)  -- (inception_4e_3x3_conv2_0-north)  coordinate[pos=1.25] (inception_4e_3x3_conv2_0-top) ;
+\draw [copyconnection]  (inception_4e_3x3_conv2-northeast)  
+-- node {\copymidarrow}(inception_4e_3x3_conv2-top)
+-- node {\copymidarrow}(inception_4e_3x3_conv2_0-top)
+-- node {\copymidarrow} (inception_4e_3x3_conv2_0-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_4e_3x3_conv2_0-east) 
+    {Box={
+        name=inception_4e_3x3_conv2_0_1,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=3,
+        width=4.266666666666667,
+        depth=3
+        }
+    };
+
+
+\path (inception_4e_5x5_conv2-southeast) -- (inception_4e_5x5_conv2-northeast) coordinate[pos=1.25] (inception_4e_5x5_conv2-top) ;
+\path (inception_4e_3x3_conv2_0_1-south)  -- (inception_4e_3x3_conv2_0_1-north)  coordinate[pos=1.25] (inception_4e_3x3_conv2_0_1-top) ;
+\draw [copyconnection]  (inception_4e_5x5_conv2-northeast)  
+-- node {\copymidarrow}(inception_4e_5x5_conv2-top)
+-- node {\copymidarrow}(inception_4e_3x3_conv2_0_1-top)
+-- node {\copymidarrow} (inception_4e_3x3_conv2_0_1-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_4e_3x3_conv2_0_1-east) 
+    {Box={
+        name=concatenate_4,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=3,
+        width=21.333333333333332,
+        depth=3
+        }
+    };
+
+
+\path (max_pooling2d_4-southeast) -- (max_pooling2d_4-northeast) coordinate[pos=1.25] (max_pooling2d_4-top) ;
+\path (concatenate_4-south)  -- (concatenate_4-north)  coordinate[pos=1.25] (concatenate_4-top) ;
+\draw [copyconnection]  (max_pooling2d_4-northeast)  
+-- node {\copymidarrow}(max_pooling2d_4-top)
+-- node {\copymidarrow}(concatenate_4-top)
+-- node {\copymidarrow} (concatenate_4-north);
+
+
+\pic[shift={(1,0,0)}] at (concatenate_4-east) 
+    {Box={
+        name=inception_5a_3x3_conv1,
+        caption=$1x1$,
+        xlabel={{96, }},
+        zlabel=3,
+        fill=\ConvColor,
+        height=3,
+        width=3.2,
+        depth=3
+        }
+    };
+
+
+\draw [connection]  (concatenate_4-east)    -- node {\midarrow} (inception_5a_3x3_conv1-west);
+
+
+\pic[shift={ (0,5,0) }] at (concatenate_4-east) 
+    {Box={
+        name=average_pooling2d_2,
+        caption= ,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=1,
+        width=34.13333333333333,
+        depth=1
+        }
+    };
+
+
+\draw [connection]  (concatenate_4-east)    -- node {\midarrow} (average_pooling2d_2-west);
+
+
+\pic[shift={(1,0,0)}] at (average_pooling2d_2-east) 
+    {Box={
+        name=inception_5a_pool_conv,
+        caption=$1x1$,
+        xlabel={{96, }},
+        zlabel=1,
+        fill=\ConvColor,
+        height=1,
+        width=3.2,
+        depth=1
+        }
+    };
+
+
+\draw [connection]  (average_pooling2d_2-east)    -- node {\midarrow} (inception_5a_pool_conv-west);
+
+
+\pic[shift={(1,0,0)}] at (inception_5a_3x3_conv1-east) 
+    {Box={
+        name=inception_5a_3x3_conv2,
+        caption=$3x3$,
+        xlabel={{384, }},
+        zlabel=3,
+        fill=\ConvColor,
+        height=3,
+        width=12.8,
+        depth=3
+        }
+    };
+
+
+\draw [connection]  (inception_5a_3x3_conv1-east)    -- node {\midarrow} (inception_5a_3x3_conv2-west);
+
+
+\pic[shift={(1,15,0)}] at (concatenate_4-east) 
+    {Box={
+        name=inception_5a_1x1_conv,
+        caption=$1x1$,
+        xlabel={{256, }},
+        zlabel=3,
+        fill=\ConvColor,
+        height=3,
+        width=8.533333333333333,
+        depth=3
+        }
+    };
+
+
+\draw [connection]  (concatenate_4-east)    -- node {\midarrow} (inception_5a_1x1_conv-west);
+
+
+\pic[shift={(2,0,0)}] at (inception_5a_3x3_conv2-east) 
+    {Box={
+        name=inception_5a_3x3_conv2_0,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=3,
+        width=12.8,
+        depth=3
+        }
+    };
+
+
+\path (inception_5a_3x3_conv2-southeast) -- (inception_5a_3x3_conv2-northeast) coordinate[pos=1.25] (inception_5a_3x3_conv2-top) ;
+\path (inception_5a_3x3_conv2_0-south)  -- (inception_5a_3x3_conv2_0-north)  coordinate[pos=1.25] (inception_5a_3x3_conv2_0-top) ;
+\draw [copyconnection]  (inception_5a_3x3_conv2-northeast)  
+-- node {\copymidarrow}(inception_5a_3x3_conv2-top)
+-- node {\copymidarrow}(inception_5a_3x3_conv2_0-top)
+-- node {\copymidarrow} (inception_5a_3x3_conv2_0-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_5a_3x3_conv2_0-east) 
+    {Box={
+        name=inception_5a_3x3_conv2_0_1,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=3,
+        width=3.2,
+        depth=3
+        }
+    };
+
+
+\path (inception_5a_pool_conv-southeast) -- (inception_5a_pool_conv-northeast) coordinate[pos=1.25] (inception_5a_pool_conv-top) ;
+\path (inception_5a_3x3_conv2_0_1-south)  -- (inception_5a_3x3_conv2_0_1-north)  coordinate[pos=1.25] (inception_5a_3x3_conv2_0_1-top) ;
+\draw [copyconnection]  (inception_5a_pool_conv-northeast)  
+-- node {\copymidarrow}(inception_5a_pool_conv-top)
+-- node {\copymidarrow}(inception_5a_3x3_conv2_0_1-top)
+-- node {\copymidarrow} (inception_5a_3x3_conv2_0_1-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_5a_3x3_conv2_0_1-east) 
+    {Box={
+        name=concatenate_5,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=3,
+        width=8.533333333333333,
+        depth=3
+        }
+    };
+
+
+\path (inception_5a_1x1_conv-southeast) -- (inception_5a_1x1_conv-northeast) coordinate[pos=1.25] (inception_5a_1x1_conv-top) ;
+\path (concatenate_5-south)  -- (concatenate_5-north)  coordinate[pos=1.25] (concatenate_5-top) ;
+\draw [copyconnection]  (inception_5a_1x1_conv-northeast)  
+-- node {\copymidarrow}(inception_5a_1x1_conv-top)
+-- node {\copymidarrow}(concatenate_5-top)
+-- node {\copymidarrow} (concatenate_5-north);
+
+
+\pic[shift={(1,0,0)}] at (concatenate_5-east) 
+    {Box={
+        name=inception_5b_3x3_conv1,
+        caption=$1x1$,
+        xlabel={{96, }},
+        zlabel=3,
+        fill=\ConvColor,
+        height=3,
+        width=3.2,
+        depth=3
+        }
+    };
+
+
+\draw [connection]  (concatenate_5-east)    -- node {\midarrow} (inception_5b_3x3_conv1-west);
+
+
+\pic[shift={ (0,5,0) }] at (concatenate_5-east) 
+    {Box={
+        name=max_pooling2d_5,
+        caption= ,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=1,
+        width=24.533333333333335,
+        depth=1
+        }
+    };
+
+
+\draw [connection]  (concatenate_5-east)    -- node {\midarrow} (max_pooling2d_5-west);
+
+
+\pic[shift={(1,0,0)}] at (max_pooling2d_5-east) 
+    {Box={
+        name=inception_5b_pool_conv,
+        caption=$1x1$,
+        xlabel={{96, }},
+        zlabel=1,
+        fill=\ConvColor,
+        height=1,
+        width=3.2,
+        depth=1
+        }
+    };
+
+
+\draw [connection]  (max_pooling2d_5-east)    -- node {\midarrow} (inception_5b_pool_conv-west);
+
+
+\pic[shift={(1,0,0)}] at (inception_5b_3x3_conv1-east) 
+    {Box={
+        name=inception_5b_3x3_conv2,
+        caption=$3x3$,
+        xlabel={{384, }},
+        zlabel=3,
+        fill=\ConvColor,
+        height=3,
+        width=12.8,
+        depth=3
+        }
+    };
+
+
+\draw [connection]  (inception_5b_3x3_conv1-east)    -- node {\midarrow} (inception_5b_3x3_conv2-west);
+
+
+\pic[shift={(1,15,0)}] at (concatenate_5-east) 
+    {Box={
+        name=inception_5b_1x1_conv,
+        caption=$1x1$,
+        xlabel={{256, }},
+        zlabel=3,
+        fill=\ConvColor,
+        height=3,
+        width=8.533333333333333,
+        depth=3
+        }
+    };
+
+
+\draw [connection]  (concatenate_5-east)    -- node {\midarrow} (inception_5b_1x1_conv-west);
+
+
+\pic[shift={(2,0,0)}] at (inception_5b_3x3_conv2-east) 
+    {Box={
+        name=inception_5b_3x3_conv2_0,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=3,
+        width=12.8,
+        depth=3
+        }
+    };
+
+
+\path (inception_5b_3x3_conv2-southeast) -- (inception_5b_3x3_conv2-northeast) coordinate[pos=1.25] (inception_5b_3x3_conv2-top) ;
+\path (inception_5b_3x3_conv2_0-south)  -- (inception_5b_3x3_conv2_0-north)  coordinate[pos=1.25] (inception_5b_3x3_conv2_0-top) ;
+\draw [copyconnection]  (inception_5b_3x3_conv2-northeast)  
+-- node {\copymidarrow}(inception_5b_3x3_conv2-top)
+-- node {\copymidarrow}(inception_5b_3x3_conv2_0-top)
+-- node {\copymidarrow} (inception_5b_3x3_conv2_0-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_5b_3x3_conv2_0-east) 
+    {Box={
+        name=inception_5b_3x3_conv2_0_1,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=3,
+        width=3.2,
+        depth=3
+        }
+    };
+
+
+\path (inception_5b_pool_conv-southeast) -- (inception_5b_pool_conv-northeast) coordinate[pos=1.25] (inception_5b_pool_conv-top) ;
+\path (inception_5b_3x3_conv2_0_1-south)  -- (inception_5b_3x3_conv2_0_1-north)  coordinate[pos=1.25] (inception_5b_3x3_conv2_0_1-top) ;
+\draw [copyconnection]  (inception_5b_pool_conv-northeast)  
+-- node {\copymidarrow}(inception_5b_pool_conv-top)
+-- node {\copymidarrow}(inception_5b_3x3_conv2_0_1-top)
+-- node {\copymidarrow} (inception_5b_3x3_conv2_0_1-north);
+
+
+\pic[shift={(0,0,0)}] at (inception_5b_3x3_conv2_0_1-east) 
+    {Box={
+        name=concatenate_6,
+        caption=,
+        xlabel={{, }},
+        zlabel=,
+        fill=\copyColor,
+        height=3,
+        width=8.533333333333333,
+        depth=3
+        }
+    };
+
+
+\path (inception_5b_1x1_conv-southeast) -- (inception_5b_1x1_conv-northeast) coordinate[pos=1.25] (inception_5b_1x1_conv-top) ;
+\path (concatenate_6-south)  -- (concatenate_6-north)  coordinate[pos=1.25] (concatenate_6-top) ;
+\draw [copyconnection]  (inception_5b_1x1_conv-northeast)  
+-- node {\copymidarrow}(inception_5b_1x1_conv-top)
+-- node {\copymidarrow}(concatenate_6-top)
+-- node {\copymidarrow} (concatenate_6-north);
+
+
+\pic[shift={ (0,0,0) }] at (concatenate_6-east) 
+    {Box={
+        name=average_pooling2d_3,
+        caption= ,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=1,
+        width=24.533333333333335,
+        depth=1
+        }
+    };
+
+
+\pic[shift={(2,0,0)}] at (average_pooling2d_3-east) 
+    {Box={
+        name=flatten,
+        caption=,
+        xlabel={{" ","dummy"}},
+        zlabel=736,
+        fill=\FlattenColor,
+        opacity=0.8,
+        height=1,
+        width=1,
+        depth=100
+        }
+    };
+
+
+\draw [connection]  (average_pooling2d_3-east)    -- node {\midarrow} (flatten-west);
+
+
+\pic[shift={(2,0,0)}] at (flatten-east) 
+    {Box={
+        name=dense_layer,
+        caption=,
+        xlabel={{" ","dummy"}},
+        zlabel=128,
+        fill=\SoftmaxColor,
+        opacity=0.8,
+        height=1,
+        width=1,
+        depth=100
+        }
+    };
+
+
+\draw [connection]  (flatten-east)    -- node {\midarrow} (dense_layer-west);
+
+
+\pic[shift={(2,0,0)}] at (dense_layer-east) 
+    {Box={
+        name=dense_1,
+        caption=,
+        xlabel={{" ","dummy"}},
+        zlabel=100,
+        fill=\SoftmaxColor,
+        opacity=0.8,
+        height=1,
+        width=1,
+        depth=100
+        }
+    };
+
+
+\draw [connection]  (dense_layer-east)    -- node {\midarrow} (dense_1-west);
+
+
+\pic[shift={(2,10,0)}] at (dense_layer-east) 
+    {Box={
+        name=dense,
+        caption=,
+        xlabel={{" ","dummy"}},
+        zlabel=100,
+        fill=\SoftmaxColor,
+        opacity=0.8,
+        height=1,
+        width=1,
+        depth=100
+        }
+    };
+
+
+\draw [connection]  (dense_layer-east)    -- node {\midarrow} (dense-west);
+
+
+\pic[shift={(2,0,0)}] at (dense_1-east) 
+    {Box={
+        name=dense_2,
+        caption=,
+        xlabel={{" ","dummy"}},
+        zlabel=50,
+        fill=\SoftmaxColor,
+        opacity=0.8,
+        height=1,
+        width=1,
+        depth=50
+        }
+    };
+
+
+\draw [connection]  (dense_1-east)    -- node {\midarrow} (dense_2-west);
+
+
+\pic[shift={(2,0,0)}] at (dense-east) 
+    {Box={
+        name=classif_age,
+        caption=,
+        xlabel={{" ","dummy"}},
+        zlabel=100,
+        fill=\SoftmaxColor,
+        opacity=0.8,
+        height=1,
+        width=1,
+        depth=100
+        }
+    };
+
+
+\draw [connection]  (dense-east)    -- node {\midarrow} (classif_age-west);
+
+
+\pic[shift={(2,0,0)}] at (dense_2-east) 
+    {Box={
+        name=classif_gender,
+        caption=,
+        xlabel={{" ","dummy"}},
+        zlabel=1,
+        fill=\SoftmaxColor,
+        opacity=0.8,
+        height=1,
+        width=1,
+        depth=1
+        }
+    };
+
+
+\draw [connection]  (dense_2-east)    -- node {\midarrow} (classif_gender-west);
+
+
+\end{tikzpicture}
+\end{document}
+

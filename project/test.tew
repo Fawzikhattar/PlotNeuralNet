@@ -1,0 +1,721 @@
+InputLayer
+Conv2D
+Conv2D
+SeparableConv2D
+SeparableConv2D
+SeparableConv2D
+SeparableConv2D
+SeparableConv2D
+SeparableConv2D
+SeparableConv2D
+SeparableConv2D
+UpSampling2D
+SeparableConv2D
+Concatenate
+SeparableConv2D
+SeparableConv2D
+UpSampling2D
+SeparableConv2D
+Concatenate
+SeparableConv2D
+SeparableConv2D
+UpSampling2D
+SeparableConv2D
+Concatenate
+SeparableConv2D
+SeparableConv2D
+SeparableConv2D
+UpSampling2D
+SeparableConv2D
+Concatenate
+SeparableConv2D
+SeparableConv2D
+SeparableConv2D
+Concatenate
+Conv2D
+Conv2D
+BatchNormalization
+SeparableConv2D
+BatchNormalization
+SeparableConv2D
+Flatten
+<tensorflow.python.keras.layers.core.Flatten object at 0x7efdbf00f588>
+Dense
+<tensorflow.python.keras.layers.core.Dense object at 0x7efdbf00f630>
+BatchNormalization
+Dense
+<tensorflow.python.keras.layers.core.Dense object at 0x7efdbf00f7f0>
+
+\documentclass[border=8pt, multi, tikz]{standalone} 
+\usepackage{import}
+\subimport{../layers/}{init}
+\usetikzlibrary{positioning}
+\usetikzlibrary{3d} %for including external image 
+
+
+\def\ConvColor{rgb:yellow,5;red,2.5;white,5}
+\def\ConvReluColor{rgb:yellow,5;red,5;white,5}
+\def\PoolColor{rgb:red,1;black,0.3}
+\def\UnpoolColor{rgb:blue,2;green,1;black,0.3}
+\def\FcColor{rgb:blue,5;red,2.5;white,5}
+\def\FcReluColor{rgb:blue,5;red,5;white,4}
+\def\SoftmaxColor{rgb:magenta,5;black,7}   
+
+
+\newcommand{\copymidarrow}{\tikz \draw[-Stealth,line width=0.8mm,draw={rgb:blue,4;red,1;green,1;black,3}] (-0.3,0) -- ++(0.3,0);}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
+\tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
+
+
+\pic[shift={(1,0,0)}] at (0,0,0) 
+    {Box={
+        name=conv1seg,
+        caption=$Conv2D|strides:1x1|kernel:7x7$,
+        xlabel={{8, }},
+        zlabel=128,
+        fill=\ConvColor,
+        height=128,
+        width=0.8,
+        depth=128
+        }
+    };
+
+
+\pic[shift={(1,0,0)}] at (conv1seg-east) 
+    {Box={
+        name=conv2seg,
+        caption=$Conv2D|strides:2x2|kernel:7x7$,
+        xlabel={{32, }},
+        zlabel=64,
+        fill=\ConvColor,
+        height=64,
+        width=3.2,
+        depth=64
+        }
+    };
+
+
+\draw [connection]  (conv1seg-east)    -- node {\midarrow} (conv2seg-west);
+
+
+\pic[shift={(1,0,0)}] at (conv2seg-east) 
+    {Box={
+        name=conv3seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{32, }},
+        zlabel=64,
+        fill=\ConvColor,
+        height=64,
+        width=3.2,
+        depth=64
+        }
+    };
+
+
+\draw [connection]  (conv2seg-east)    -- node {\midarrow} (conv3seg-west);
+
+
+\pic[shift={(1,0,0)}] at (conv3seg-east) 
+    {Box={
+        name=conv4seg,
+        caption=$SeparableConv2D|strides:2x2|kernel:3x3$,
+        xlabel={{64, }},
+        zlabel=32,
+        fill=\ConvColor,
+        height=32,
+        width=6.4,
+        depth=32
+        }
+    };
+
+
+\draw [connection]  (conv3seg-east)    -- node {\midarrow} (conv4seg-west);
+
+
+\pic[shift={(1,0,0)}] at (conv4seg-east) 
+    {Box={
+        name=conv5seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{64, }},
+        zlabel=32,
+        fill=\ConvColor,
+        height=32,
+        width=6.4,
+        depth=32
+        }
+    };
+
+
+\draw [connection]  (conv4seg-east)    -- node {\midarrow} (conv5seg-west);
+
+
+\pic[shift={(1,0,0)}] at (conv5seg-east) 
+    {Box={
+        name=conv6seg,
+        caption=$SeparableConv2D|strides:2x2|kernel:3x3$,
+        xlabel={{128, }},
+        zlabel=16,
+        fill=\ConvColor,
+        height=16,
+        width=12.8,
+        depth=16
+        }
+    };
+
+
+\draw [connection]  (conv5seg-east)    -- node {\midarrow} (conv6seg-west);
+
+
+\pic[shift={(1,0,0)}] at (conv6seg-east) 
+    {Box={
+        name=conv7seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{128, }},
+        zlabel=16,
+        fill=\ConvColor,
+        height=16,
+        width=12.8,
+        depth=16
+        }
+    };
+
+
+\draw [connection]  (conv6seg-east)    -- node {\midarrow} (conv7seg-west);
+
+
+\pic[shift={(1,0,0)}] at (conv7seg-east) 
+    {Box={
+        name=conv8seg,
+        caption=$SeparableConv2D|strides:2x2|kernel:3x3$,
+        xlabel={{256, }},
+        zlabel=8,
+        fill=\ConvColor,
+        height=8,
+        width=25.6,
+        depth=8
+        }
+    };
+
+
+\draw [connection]  (conv7seg-east)    -- node {\midarrow} (conv8seg-west);
+
+
+\pic[shift={(1,0,0)}] at (conv8seg-east) 
+    {Box={
+        name=conv9seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{512, }},
+        zlabel=8,
+        fill=\ConvColor,
+        height=8,
+        width=51.2,
+        depth=8
+        }
+    };
+
+
+\draw [connection]  (conv8seg-east)    -- node {\midarrow} (conv9seg-west);
+
+
+\pic[shift={(1,0,0)}] at (conv9seg-east) 
+    {Box={
+        name=conv10seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{512, }},
+        zlabel=8,
+        fill=\ConvColor,
+        height=8,
+        width=51.2,
+        depth=8
+        }
+    };
+
+
+\draw [connection]  (conv9seg-east)    -- node {\midarrow} (conv10seg-west);
+
+
+\pic[shift={ (1,0,0) }] at (0,0,0) 
+    {Box={
+        name=up_sampling2d,
+        caption=up sample ,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=16,
+        width=51.2,
+        depth=16
+        }
+    };
+
+
+\draw [connection]  (conv10seg-east)    -- node {\midarrow} (up_sampling2d-west);
+
+
+\pic[shift={(1,0,0)}] at (up_sampling2d-east) 
+    {Box={
+        name=conv11seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{64, }},
+        zlabel=16,
+        fill=\ConvColor,
+        height=16,
+        width=6.4,
+        depth=16
+        }
+    };
+
+
+\draw [connection]  (up_sampling2d-east)    -- node {\midarrow} (conv11seg-west);
+
+
+\path (conv7seg-southeast) -- (conv7seg-northeast) coordinate[pos=1.25] (conv7seg-top) ;
+\path (conv11seg-south)  -- (conv11seg-north)  coordinate[pos=1.25] (conv11seg-top) ;
+\draw [copyconnection]  (conv7seg-northeast)  
+-- node {\copymidarrow}(conv7seg-top)
+-- node {\copymidarrow}(conv11seg-top)
+-- node {\copymidarrow} (conv11seg-north);
+
+
+\draw [connection]  (conv11seg-east)    -- node {\midarrow} (concatenate_7-west);
+
+
+\pic[shift={(1,0,0)}] at (concatenate_7-east) 
+    {Box={
+        name=conv12seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{64, }},
+        zlabel=16,
+        fill=\ConvColor,
+        height=16,
+        width=6.4,
+        depth=16
+        }
+    };
+
+
+\draw [connection]  (concatenate_7-east)    -- node {\midarrow} (conv12seg-west);
+
+
+\pic[shift={(1,0,0)}] at (conv12seg-east) 
+    {Box={
+        name=conv13seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{64, }},
+        zlabel=16,
+        fill=\ConvColor,
+        height=16,
+        width=6.4,
+        depth=16
+        }
+    };
+
+
+\draw [connection]  (conv12seg-east)    -- node {\midarrow} (conv13seg-west);
+
+
+\pic[shift={ (1,0,0) }] at (0,0,0) 
+    {Box={
+        name=up_sampling2d_1,
+        caption=up sample ,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=32,
+        width=6.4,
+        depth=32
+        }
+    };
+
+
+\draw [connection]  (conv13seg-east)    -- node {\midarrow} (up_sampling2d_1-west);
+
+
+\pic[shift={(1,0,0)}] at (up_sampling2d_1-east) 
+    {Box={
+        name=conv14seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{32, }},
+        zlabel=32,
+        fill=\ConvColor,
+        height=32,
+        width=3.2,
+        depth=32
+        }
+    };
+
+
+\draw [connection]  (up_sampling2d_1-east)    -- node {\midarrow} (conv14seg-west);
+
+
+\path (conv5seg-southeast) -- (conv5seg-northeast) coordinate[pos=1.25] (conv5seg-top) ;
+\path (conv14seg-south)  -- (conv14seg-north)  coordinate[pos=1.25] (conv14seg-top) ;
+\draw [copyconnection]  (conv5seg-northeast)  
+-- node {\copymidarrow}(conv5seg-top)
+-- node {\copymidarrow}(conv14seg-top)
+-- node {\copymidarrow} (conv14seg-north);
+
+
+\draw [connection]  (conv14seg-east)    -- node {\midarrow} (concatenate_8-west);
+
+
+\pic[shift={(1,0,0)}] at (concatenate_8-east) 
+    {Box={
+        name=conv15seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{32, }},
+        zlabel=32,
+        fill=\ConvColor,
+        height=32,
+        width=3.2,
+        depth=32
+        }
+    };
+
+
+\draw [connection]  (concatenate_8-east)    -- node {\midarrow} (conv15seg-west);
+
+
+\pic[shift={(1,0,0)}] at (conv15seg-east) 
+    {Box={
+        name=conv16seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{32, }},
+        zlabel=32,
+        fill=\ConvColor,
+        height=32,
+        width=3.2,
+        depth=32
+        }
+    };
+
+
+\draw [connection]  (conv15seg-east)    -- node {\midarrow} (conv16seg-west);
+
+
+\pic[shift={ (1,0,0) }] at (0,0,0) 
+    {Box={
+        name=up_sampling2d_2,
+        caption=up sample ,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=64,
+        width=3.2,
+        depth=64
+        }
+    };
+
+
+\draw [connection]  (conv16seg-east)    -- node {\midarrow} (up_sampling2d_2-west);
+
+
+\pic[shift={(1,0,0)}] at (up_sampling2d_2-east) 
+    {Box={
+        name=conv17seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{16, }},
+        zlabel=64,
+        fill=\ConvColor,
+        height=64,
+        width=1.6,
+        depth=64
+        }
+    };
+
+
+\draw [connection]  (up_sampling2d_2-east)    -- node {\midarrow} (conv17seg-west);
+
+
+\path (conv3seg-southeast) -- (conv3seg-northeast) coordinate[pos=1.25] (conv3seg-top) ;
+\path (conv17seg-south)  -- (conv17seg-north)  coordinate[pos=1.25] (conv17seg-top) ;
+\draw [copyconnection]  (conv3seg-northeast)  
+-- node {\copymidarrow}(conv3seg-top)
+-- node {\copymidarrow}(conv17seg-top)
+-- node {\copymidarrow} (conv17seg-north);
+
+
+\draw [connection]  (conv17seg-east)    -- node {\midarrow} (concatenate_9-west);
+
+
+\pic[shift={(1,0,0)}] at (concatenate_9-east) 
+    {Box={
+        name=conv18seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{16, }},
+        zlabel=64,
+        fill=\ConvColor,
+        height=64,
+        width=1.6,
+        depth=64
+        }
+    };
+
+
+\draw [connection]  (concatenate_9-east)    -- node {\midarrow} (conv18seg-west);
+
+
+\pic[shift={(1,0,0)}] at (conv18seg-east) 
+    {Box={
+        name=conv19seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{16, }},
+        zlabel=64,
+        fill=\ConvColor,
+        height=64,
+        width=1.6,
+        depth=64
+        }
+    };
+
+
+\draw [connection]  (conv18seg-east)    -- node {\midarrow} (conv19seg-west);
+
+
+\pic[shift={(1,0,0)}] at (conv19seg-east) 
+    {Box={
+        name=conv23seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{3, }},
+        zlabel=64,
+        fill=\ConvColor,
+        height=64,
+        width=0.3,
+        depth=64
+        }
+    };
+
+
+\draw [connection]  (conv19seg-east)    -- node {\midarrow} (conv23seg-west);
+
+
+\pic[shift={ (1,0,0) }] at (0,0,0) 
+    {Box={
+        name=up_sampling2d_3,
+        caption=up sample ,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=128,
+        width=0.3,
+        depth=128
+        }
+    };
+
+
+\draw [connection]  (conv23seg-east)    -- node {\midarrow} (up_sampling2d_3-west);
+
+
+\pic[shift={(1,0,0)}] at (up_sampling2d_3-east) 
+    {Box={
+        name=conv20seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{8, }},
+        zlabel=128,
+        fill=\ConvColor,
+        height=128,
+        width=0.8,
+        depth=128
+        }
+    };
+
+
+\draw [connection]  (up_sampling2d_3-east)    -- node {\midarrow} (conv20seg-west);
+
+
+\path (conv1seg-southeast) -- (conv1seg-northeast) coordinate[pos=1.25] (conv1seg-top) ;
+\path (conv20seg-south)  -- (conv20seg-north)  coordinate[pos=1.25] (conv20seg-top) ;
+\draw [copyconnection]  (conv1seg-northeast)  
+-- node {\copymidarrow}(conv1seg-top)
+-- node {\copymidarrow}(conv20seg-top)
+-- node {\copymidarrow} (conv20seg-north);
+
+
+\draw [connection]  (conv20seg-east)    -- node {\midarrow} (concatenate_10-west);
+
+
+\pic[shift={(1,0,0)}] at (concatenate_10-east) 
+    {Box={
+        name=conv21seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{8, }},
+        zlabel=128,
+        fill=\ConvColor,
+        height=128,
+        width=0.8,
+        depth=128
+        }
+    };
+
+
+\draw [connection]  (concatenate_10-east)    -- node {\midarrow} (conv21seg-west);
+
+
+\pic[shift={(1,0,0)}] at (conv21seg-east) 
+    {Box={
+        name=conv22seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:3x3$,
+        xlabel={{8, }},
+        zlabel=128,
+        fill=\ConvColor,
+        height=128,
+        width=0.8,
+        depth=128
+        }
+    };
+
+
+\draw [connection]  (conv21seg-east)    -- node {\midarrow} (conv22seg-west);
+
+
+\pic[shift={(1,0,0)}] at (conv22seg-east) 
+    {Box={
+        name=conv24seg,
+        caption=$SeparableConv2D|strides:1x1|kernel:1x1$,
+        xlabel={{3, }},
+        zlabel=128,
+        fill=\ConvColor,
+        height=128,
+        width=0.3,
+        depth=128
+        }
+    };
+
+
+\draw [connection]  (conv22seg-east)    -- node {\midarrow} (conv24seg-west);
+
+
+\path (conv24seg-southeast) -- (conv24seg-northeast) coordinate[pos=1.25] (conv24seg-top) ;
+\path (input_4-south)  -- (input_4-north)  coordinate[pos=1.25] (input_4-top) ;
+\draw [copyconnection]  (conv24seg-northeast)  
+-- node {\copymidarrow}(conv24seg-top)
+-- node {\copymidarrow}(input_4-top)
+-- node {\copymidarrow} (input_4-north);
+
+
+\draw [connection]  (conv24seg-east)    -- node {\midarrow} (concatenate_11-west);
+
+
+\pic[shift={(1,0,0)}] at (concatenate_11-east) 
+    {Box={
+        name=conv2d,
+        caption=$Conv2D|strides:2x2|kernel:3x3$,
+        xlabel={{10, }},
+        zlabel=64,
+        fill=\ConvColor,
+        height=64,
+        width=1.0,
+        depth=64
+        }
+    };
+
+
+\draw [connection]  (concatenate_11-east)    -- node {\midarrow} (conv2d-west);
+
+
+\pic[shift={(1,0,0)}] at (conv2d-east) 
+    {Box={
+        name=conv2d_1,
+        caption=$Conv2D|strides:2x2|kernel:3x3$,
+        xlabel={{20, }},
+        zlabel=32,
+        fill=\ConvColor,
+        height=32,
+        width=2.0,
+        depth=32
+        }
+    };
+
+
+\draw [connection]  (conv2d-east)    -- node {\midarrow} (conv2d_1-west);
+
+
+\pic[shift={(1,0,0)}] at (conv2d_1-east) 
+    {Box={
+        name=separable_conv2d,
+        caption=$SeparableConv2D|strides:4x4|kernel:3x3$,
+        xlabel={{40, }},
+        zlabel=8,
+        fill=\ConvColor,
+        height=8,
+        width=4.0,
+        depth=8
+        }
+    };
+
+
+\draw [connection]  (conv2d_1-east)    -- node {\midarrow} (separable_conv2d-west);
+
+
+\pic[shift={(1,0,0)}] at (separable_conv2d-east) 
+    {Box={
+        name=separable_conv2d_1,
+        caption=$SeparableConv2D|strides:1x1|kernel:1x1$,
+        xlabel={{6, }},
+        zlabel=8,
+        fill=\ConvColor,
+        height=8,
+        width=0.6,
+        depth=8
+        }
+    };
+
+
+\draw [connection]  (separable_conv2d-east)    -- node {\midarrow} (separable_conv2d_1-west);
+
+
+\pic[shift={(2,0,0)}] at (separable_conv2d_1-east) 
+    {Box={
+        name=flatten_1,
+        caption=Flatten,
+        xlabel={{" ","dummy"}},
+        zlabel=384,
+        fill=\SoftmaxColor,
+        opacity=0.8,
+        height=1,
+        width=1,
+        depth=100
+        }
+    };
+
+
+\draw [connection]  (separable_conv2d_1-east)    -- node {\midarrow} (flatten_1-west);
+
+
+\pic[shift={(2,0,0)}] at (flatten_1-east) 
+    {Box={
+        name=dense_3,
+        caption=Dense,
+        xlabel={{" ","dummy"}},
+        zlabel=6,
+        fill=\SoftmaxColor,
+        opacity=0.8,
+        height=1,
+        width=1,
+        depth=6
+        }
+    };
+
+
+\draw [connection]  (flatten_1-east)    -- node {\midarrow} (dense_3-west);
+
+
+\pic[shift={(2,0,0)}] at (dense_3-east) 
+    {Box={
+        name=dense_4,
+        caption=Dense,
+        xlabel={{" ","dummy"}},
+        zlabel=6,
+        fill=\SoftmaxColor,
+        opacity=0.8,
+        height=1,
+        width=1,
+        depth=6
+        }
+    };
+
+
+\draw [connection]  (dense_3-east)    -- node {\midarrow} (dense_4-west);
+
+
+\end{tikzpicture}
+\end{document}
+

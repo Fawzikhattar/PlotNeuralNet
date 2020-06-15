@@ -1,0 +1,22 @@
+[?2004h[?1049h[22;0;0t[?1h=[?2004h[1;55r[?12h[?12l[27m[23m[29m[m[H[2J[?25l[55;1H"visualizeTFModel.py" 67L, 2316C[1;1H[35mimport[m tensorflow [38;5;130mas[m tf
+[35mimport[m sys
+sys.path.append([31m'../'[m)
+[35mfrom[m pycore.tikzeng [35mimport[m *
+[35mimport[m pdb
+
+[38;5;130mdef[m [36mgenerateTex[m(modelPath,nameFile=[31m"out.tex"[m):
+    model=tf.keras.models.load_model(modelPath)
+    arch=[]
+    prevDepth=[31m0[m
+    totDepth=[31m0[m
+    [38;5;130mfor[m i,(lData,modelLayer) [38;5;130min[m [36menumerate[m([36mzip[m(model.get_config()[[31m'layers'[m],model.layers)):[13;9HopType=lData[[31m'class_name'[m][15;9H[36mprint[m(opType)[16;9HinputShape=modelLayer.input_shape[17;9H[38;5;130mif[m(opType!=[31m"Flatten"[m [38;5;130mand[m opType!=[31m"Dense"[m ):[19;13H_,outH,outW,outD=modelLayer.output_shape[20;13H[34m#print("outD:",outD,opType)[m[22;9H[38;5;130melse[m:[23;13HoutL=modelLayer.output_shape[[31m1[m][24;13HoutLDisp=[36mmin[m(outL,[31m100[m)[25;9H[34m#print("prevDepth:",prevDepth,opType)[m[26;9HlayerName=modelLayer.name[28;9HprevDepth=[31m1[m[29;9H[38;5;130mif[m(opType==[31m'InputLayer'[m):[30;13Harch.append(to_head( [31m'..'[m ))[31;13Harch.append(to_cor())[32;13Harch.append(to_begin())[33;13HprevDepth=[31m1[m[34;13H[38;5;130mcontinue[36;9Helif[m(opType==[31m'Conv2D'[m):[37;13HlatexCmd=to_Conv(layerName, outW,outD , offset=[31m"("[m+[36mstr[m(prevDepth)+[31m",0,0)"[m, to=[31m"("[m+[36mstr[m(totDepth)+[31m",0,0)"[m, height=outH, depth=outW , width=outD )[38;9H[38;5;130melif[m(opType==[31m'MaxPooling2D'[m):[39;13HlatexCmd=to_Pool(layerName, offset=[31m"("[m+[36mstr[m(prevDepth)+[31m",0,0)"[m,to=[31m"("[m+[36mstr[m(totDepth)+[31m",0,0)"[m , height=outH, depth=outW, width=outD)[41;9H[38;5;130melif[m(opType==[31m'Flatten'[m):[42;13HlatexCmd=to_SoftMax(layerName, outL ,offset=[31m"("[m+[36mstr[m(prevDepth)+[31m",0,0)"[m, to=[31m"("[m+[36mstr[m(totDepth)+[31m",0,0)"[m, caption=[31m"Flatten"[m,height=[31m1[m,depth=outLDisp,width=[31m1[m  )[44;13H[34m#pdb.set_trace()[m[46;9H[38;5;130melif[m(opType==[31m'Dense'[m):[47;13HlatexCmd=to_SoftMax(layerName, outL ,offset=[31m"("[m+[36mstr[m(prevDepth)+[31m",0,0)"[m, to=[31m"("[m+[36mstr[m(totDepth)+[31m",0,0)"[m,caption=[31m"Dense"[m,height=[31m1[m,depth=outLDisp,width=[31m1[m  )[48;9H[31m"""elif(opType=='Dense'):
+            latexCmd=
+        elif(opType=='Dense'):
+            latexCmd=
+        elif(opType=='Dense'):
+            latexCmd=
+        elif(opType=='Dense'):[m[55;187H1,1[11CTop[1;1H[?25h[?25l[55;1HType  :qa!  and press <Enter> to abandon all changes and exit Vim[55;187H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;187H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;187H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;187H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;187H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;1H[1mrecording @q[m[55;13H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;1H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;1HType  :qa!  and press <Enter> to abandon all changes and exit Vim[55;187H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;187H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;187H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;187H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;187H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;187H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;187H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;187H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;187H[K[55;187H1,1[11CTop[1;1H[?25h[?25l[55;187H2[2;1H[?25h[?25l[55;187H3[3;1H[?25h[?25l[55;187H4[4;1H[?25h[?25l pycore.tikzeng [35mimport[m *[4;25H[K[4;1H[?25h[?25l[55;1H[97m[41mE490: No fold found[m[55;20H[K[55;187H4,1[11CTop[4;1H[?25h[?25l[55;189H7[4;7H[?25h[?25l[1;54r[1;1H[3M[1;55r[52;1H[31m            latexCmd=
+        """[m[54;9HprevDepth=outD/[31m2[m[55;1H[K[55;187H4,2[11C23%[1;2H[?25h[?25l[55;187H5,1[2;1H[?25h[55;1H[?2004l[?2004l[?1l>[?1049l[23;0;0tVim: Error reading input, exiting...
+Vim: preserving files...
+Vim: Finished.
+[55;1H[J
